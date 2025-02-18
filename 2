@@ -1,0 +1,104 @@
+**I. Coins**
+
+*   **Definition**: Digital currencies that operate on their own blockchain and are used as a payment method.
+*   **Function**: Primarily a medium of exchange.
+*   **Examples**: Bitcoin (BTC), Ethereum (ETH), Litecoin (LTC), and Ripple (XRP).
+*   **Characteristics**: Fungible, divisible, portable, and limited in supply.
+*   **Creation**: Requires building a new blockchain, which demands time and expertise.
+
+**II. Tokens**
+
+*   **Definition**: Digital assets created on top of an existing blockchain.
+*   **Function**: Offer a wider range of functionalities within a specific project's ecosystem.
+*   **Infrastructure**: Rely on another blockchain's infrastructure, like Ethereum.
+*   **Creation**: Created using smart contracts on a host blockchain, such as Ethereum.
+*   **Types**:
+    *   Utility tokens: Provide access to a product or service.
+    *   Security tokens: Represent ownership in an asset or company.
+    *   Governance tokens: Allow holders to vote on decisions within a blockchain ecosystem.
+*   **Fungible Tokens**: Identical and interchangeable assets, like USD Coin (USDC). Employed as payment systems or stores of value and adhere to the ERC-20 standard.
+*   **Non-Fungible Tokens (NFTs)**: Unique and non-interchangeable assets, such as digital art or deeds.
+
+**III. Coins vs. Tokens**
+
+| Aspect                      | Coins                                                                | Tokens                                                                                                |
+| --------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Technological Infrastructure | Operate on their own blockchain.                                     | Built on existing blockchains.                                                                        |
+| Use Cases and Functions     | Primarily currency for payments, savings, and exchanges.             | Offer diverse functionalities like representing digital assets, voting rights, or access to services. |
+| Governance and Control      | Decentralized; governed by consensus mechanisms.                     | Governed by rules in smart contracts, modifiable by developers or token holders.                      |
+| Creation and Issuance       | Requires developing a new blockchain, demanding significant resources. | Issued via smart contracts, making them easier and more accessible to create.                        |
+
+**IV. ERC-20: Standard for Fungible Tokens**
+
+*   **Definition**: A standardized protocol for creating fungible tokens on the Ethereum blockchain.
+*   **Purpose**: Enables developers to create tokens supported by smart contracts that can interact with various products and services.
+*   **Interoperability**: Tokens created with ERC-20 are interchangeable and compatible with other smart-contract-enabled tokens.
+*   **How it Works**: ERC-20 tokens exist within a contract instead of user accounts. The contract defines the token rules and links users’ balances to their Ethereum addresses.
+*   **Key Functions**:
+    *   `totalSupply()`: Check the total number of tokens.
+    *   `balanceOf(owner)`: Check the balance for an account.
+    *   `transfer(to, value)`: Transfer tokens from the owner to another account.
+    *   `transferFrom(from, to, value)`: Send tokens authorized from one address to another.
+    *   `approve(spender, value)`: Allow a spender to withdraw from one's account.
+    *   `allowance(owner, spender)`: Check how many tokens can be called by permission.
+*   **Events**:
+    *   `Transfer(from, to, value)`: Triggers when tokens are transferred.
+    *   `Approval(owner, spender)`: Triggers whenever approval is called.
+*   **Use Cases**:
+    *   Stablecoins: Pegged to fiat currencies or other assets.
+    *   Security tokens: Value derived from external, tradable assets.
+    *   Utility tokens: Provide access to specific products, services, or features within a blockchain-based ecosystem.
+*   **Examples**:
+    *   Tether (USDT): A stablecoin pegged to fiat currencies like the US dollar.
+    *   USD Coin (USDC): A stablecoin pegged to the US dollar on a 1:1 basis.
+    *   Wrapped Bitcoin (WBTC): An ERC-20 token that brings Bitcoin’s liquidity to the Ethereum blockchain.
+*   **Delegated Spending**: Allows smart contract-based applications and decentralized exchanges to interact with tokens without direct involvement of the token owner.
+
+**V. Other ERC Token Standards**
+
+*   **ERC-20**: Standard token for basic functionalities regarding fungible tokens.
+*   **ERC-223**: Aims to serve the same purposes for fungible tokens as ERC20, but solves an ERC20 inherent issue that resulted in the loss of tokens if they were sent to a smart contract that was not able to deal with them.
+*   **ERC-721**: Non-fungible Token Standard used to track and transfer ownership of NFT.
+*   **ERC-1400**: Security Token Standard designed for Security Tokens.
+
+**VI. Introduction to Solidity**
+
+*   **Definition**: A high-level, contract-oriented programming language for writing smart contracts on Ethereum.
+*   **Contracts**: Collections of code (functions) and data (state) that reside at a specific address on the Ethereum blockchain.
+*   **Basic Example**:
+
+    ```solidity
+    // SPDX-License-Identifier: GPL-3.0
+    pragma solidity >=0.4.16 <0.9.0;
+    contract SimpleStorage {
+        uint storedData;
+        function set(uint x) public {
+            storedData = x;
+        }
+        function get() public view returns (uint) {
+            return storedData;
+        }
+    }
+    ```
+*   **Subcurrency Example**: Implements the simplest form of a cryptocurrency.
+*   **Key aspects**:
+    *   Only the contract creator can create new coins.
+    *   Anyone can send coins to each other without registration.
+    *   Uses `address` type for storing addresses of contracts or a hash of the public half of a keypair.
+    *   Uses `mapping` type as hash tables.
+    *   Emits events to track transactions.
+    *   Uses a constructor that is executed during the creation of the contract and cannot be called afterwards.
+    *   Uses the `require` function to define conditions that reverts all changes if not met.
+    *   Errors allow you to provide more information to the caller about why a condition or operation failed.
+
+**VII. Hardhat**
+
+*   **Definition**: A development environment to facilitate building on Ethereum.
+*   **Function**: Helps developers manage and automate the recurring tasks of building smart contracts and dApps.
+*   **Features**:
+    *   Built-in Hardhat Network, a local Ethereum network designed for development.
+    *   Allows deploying contracts, running tests, and debugging code.
+*   **Key Commands**:
+    *   `npx hardhat compile`: Compiles the contract.
+    *   `npx hardhat test`: Runs tests.
+
