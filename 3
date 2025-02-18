@@ -1,0 +1,144 @@
+**I. Time Series Analysis Basics**
+*   **Time Series Definition:** Data recorded sequentially over time, where time is a significant aspect.
+*   **Equal Spacing:** Most time series have data points at regular intervals (daily, monthly, quarterly, etc.).
+*   **Stochastic Process:** A time series can be viewed as a sample from a stochastic process, which is a sequence of random variables.
+*   **Stationary Process:** A probability model for time series with time-invariant behavior. Requires a stable relationship between current and lagged values.
+    *   **Mathematical Definition:** Probability distributions of  \(Y_1, ..., Y_t\)  and  \(Y_{1+s}, ..., Y_{t+s}\)  are the same for any times  \(s\)  and  \(t\).
+*   **Weak Stationarity (Covariance Stationarity):**
+    *   Constant mean: \(E[Y_t] = \mu\)
+    *   Constant variance: \(var(Y_t) = E[(Y_t - \mu)^2] = \sigma^2\)
+    *   Constant autocovariance structure: \(corr(Y_s, Y_t) = \rho_{|s-t|}\), for all \(s\), \(t\)
+*   **White-Noise Process:** A sequence of independent and identically distributed (IID) random variables with zero mean.
+    *   **Strict White Noise:**  \(\epsilon_t \sim IID(0, \sigma^2)\)
+    *   **Weak White Noise:** Uncorrelated but not necessarily independent, \(\epsilon_t \sim WN(0, \sigma^2)\)
+    *   Past values cannot predict future values due to lack of correlation.
+
+**II. Key Properties of Stationary Time Series**
+
+*   **Expectation:** \(\mu = E(Y_t)\)
+*   **Variance:** \(\gamma_0 = var(Y_t)\)
+*   **Auto-covariance:** \(\gamma_{t-s} = cov(Y_s, Y_t) = E[(Y_s - \mu)(Y_t - \mu)]\)
+*   **Autocorrelation:** \(\rho_{t-s} = \frac{cov(Y_s, Y_t)}{var(Y_t)} = \frac{\gamma_{t-s}}{\gamma_0}\)
+*   **Lagged Scatterplot:**  Graphical summary of serial dependence, plotting time series against itself with a time offset.
+
+**III. Autocorrelation Function (ACF)**
+
+*   **Definition:** Measures the serial dependence between values of a time series and their past values.
+*   **Theoretical ACF:** \(\rho_k = \frac{E[(Y_t - \mu)(Y_{t-k} - \mu)]}{\sigma^2}\)
+    *   Measures linear relations of \(Y_t\) and \(Y_{t-k}\) for different \(k\).
+    *   \(-1 \leq \rho_k \leq 1\) and \(\rho_k = \rho_{-k}\).
+*   **Sample ACF (Correlogram):** Plot of sample autocorrelations \(\hat{\rho}_k\) against lags \(k\).
+    *   Typically plotted for the first \(T/4\) lags.
+    *   \(\hat{\rho}_0 = 1\)
+*   **Estimating Autocorrelations:**
+    *   Lag-1 autocorrelation: \(\hat{\rho}_1 = \frac{\sum_{t=2}^{T}(Y_t - \bar{Y})(Y_{t-1} - \bar{Y})}{\sum_{t=1}^{T}(Y_t - \bar{Y})^2}\)
+    *   Lag-k autocorrelation: \(\hat{\rho}_k = \frac{\sum_{t=k+1}^{T}(Y_t - \bar{Y})(Y_{t-k} - \bar{Y})}{\sum_{t=1}^{T}(Y_t - \bar{Y})^2}\)
+    *   Rule of thumb: \(T \geq 50\) and \(k \leq T/4\).
+*   **Sampling Distribution of AC Estimator:**
+    *   For IID sequence with finite variance: \(\hat{\rho}_k \sim N\left(\rho_k, \frac{1}{T}\right)\)
+    *   For weakly stationary series: \(\hat{\rho}_k \sim N\left(\rho_k, \frac{1 + 2\sum_{j=1}^{k-1} \rho_j^2}{T}\right)\)
+*   **Test for Autocorrelation:**
+    *   Null hypothesis: \(H_0: \rho_k = 0\)
+    *   Reject null hypothesis if \(\hat{\rho}_k > \frac{2}{\sqrt{T}}\)
+*   **Correlogram Significance:** Dashed lines at \(\pm \frac{2}{\sqrt{T}}\) indicate 5% significance limits. Bars beyond these lines indicate significant autocorrelations.
+*   **Ljung-Box Test:**  Tests if the first m ACFs are jointly zero.
+    *   \(H_0: \rho_1 = \rho_2 = ... = \rho_m = 0\) vs. \(H_a: \rho_i \neq 0\)
+    *   Test statistic: \(Q(m) = T(T+2)\sum_{k=1}^{m} \frac{\hat{\rho}_k^2}{T-k} \sim \chi^2(m)\)
+    *   For residuals of a fitted model, the Q(m) statistic is asymptotically \(\chi^2_{m-l}\) distributed, where \(l\) is the number of estimated parameters in the fitted model.
+
+**IV. Autoregressive (AR) Models**
+
+*   **Definition:** Regression model based on a weighted average of prior values in the series.
+*   **AR(p) Model:** \(Y_t = \delta + \phi_1 Y_{t-1} + \phi_2 Y_{t-2} + ... + \phi_p Y_{t-p} + \epsilon_t\)
+    *   \(\delta = \mu(1 - \phi_1 - \phi_2 - ... - \phi_p)\)
+    *   Error term assumptions: zero mean, constant variance, mutually uncorrelated
+*   **AR(1) Model:** \(Y_t = \delta + \phi Y_{t-1} + \epsilon_t\)
+    *   Stationary if and only if \(-1 < \phi < 1\)
+    *   Mean: \(\mu = \frac{\delta}{1 - \phi}\)
+    *   Variance: \(\gamma_0 = \frac{\sigma^2}{1 - \phi^2}\)
+    *   ACF: \(\rho_k = \phi^k\), for \(k = 1, 2, ...\)
+*   **AR(2) Model:** \(Y_t = \delta + \phi_1 Y_{t-1} + \phi_2 Y_{t-2} + \epsilon_t\)
+    *   Mean: \(\mu = \frac{\delta}{1 - \phi_1 - \phi_2}\)
+    *   ACF: \(\rho_0 = 1\), \(\rho_1 = \frac{\phi_1}{1 - \phi_2}\), \(\rho_k = \phi_1 \rho_{k-1} + \phi_2 \rho_{k-2}\), \(k \geq 2\)
+    *   Stationarity conditions: \(\phi_2 + \phi_1 < 1\), \(\phi_2 - \phi_1 < 1\), \(-1 < \phi_2 < 1\)
+
+**V. Partial Autocorrelation Function (PACF)**
+
+*   **Definition:** Correlation between a variable and a lag of itself that is not explained by correlations at lower-order lags.
+    *   \(Corr(Y_t - \hat{Y}_t|Y_{t+1}, ..., Y_{t+k-1}, Y_{t+k} - \hat{Y}_{t+k}|Y_{t+1}, ..., Y_{t+k-1})\)
+*   **Identifying AR Order:** PACF cuts off at lag p for an AR(p) model.
+*   **AR(1) PACF and ACF:** Identical, \(\pi_{11} = \rho_1\)
+*   **AR(2) PACF and ACF:** PACF cuts off at lag 2, while ACF decays slowly
+
+**VI. Model Selection Criteria**
+
+*   **Akaike Information Criterion (AIC):** \(AIC(p, q) = ln(\hat{\sigma}_{p,q}^2) + \frac{2}{T}(p + q)\)
+    *   Tends to overparameterize.
+*   **Bayesian Information Criterion (BIC):** \(BIC(p, q) = ln(\hat{\sigma}_{p,q}^2) + \frac{ln(T)}{T}(p + q)\)
+    *   Imposes a higher penalty for additional parameters, selects lower-order models.
+    *   Determines the true model asymptotically.
+*   **Corrected AIC (AICC):** \(AICC(p, q) = ln(\hat{\sigma}_{p,q}^2) + \frac{2(p + q + 1)}{T - p - q - 2}\)
+    *   Corrects bias of AIC, designed for small samples.
+*   **Criterion Comparison:** \(k_{AIC} \geq k_{AICC} \geq k_{BIC}\)
+*   **Practical Use:** Use information criteria as guidelines, not the sole criteria. Consider multiple reasonable models and diagnostic checks.
+
+**VII. Diagnostic Checking**
+
+*   **Residual Analysis:** Residuals should be small and exhibit no systematic patterns.
+*   **Box-Ljung Test:** Applied to residuals to check for remaining autocorrelations.
+*   **Model Misspecification:** Fitting an incorrect model leads to autocorrelated residuals.
+
+**VIII. Box-Jenkins Procedure**
+
+1.  **Identification:** Determine autoregressive order (p) and moving average order (q).
+2.  **Estimation:** Estimate ARMA model parameters and residual variance.
+3.  **Diagnostic Checking:** Examine model adequacy; residuals should resemble white noise.
+4.  **Forecasting:** Compare forecasting performance of alternative models.
+
+**IX. Trends and Stationarity**
+
+*   **Non-Stationarity:** Many economic and financial series are non-stationary, often trending.
+*   **Trend-Stationary (TS):** \(Y_t = \mu + \beta t + \epsilon_t\)
+    *   Deterministic trend.
+    *   Shocks have transitory effects.
+*   **Difference-Stationary (DS):** \(Y_t = \delta + Y_{t-1} + \epsilon_t\)
+    *   Stochastic trend, contains a unit root (random walk).
+    *   Shocks have permanent effects.
+
+**X. Differencing**
+
+*   **Difference Operator:** \(\Delta y_t = y_t - y_{t-1}\)
+*   **Integrated Order:** If a time series must be differenced d times to become stationary, it is integrated of order d, denoted \(Y_t \sim I(d)\).
+
+**XI. ARIMA Models**
+
+*   **ARIMA(p, d, q):**
+    *   Integrated process of order d to achieve stationarity.
+    *   AR process of order p.
+    *   MA process of order q.
+*   **Notation Equivalences:**
+    *   ARIMA(1,0,0) = AR(1)
+    *   ARIMA(0,0,1) = MA(1)
+    *   ARIMA(1,0,1) = ARMA(1,1)
+
+**XII. Unit Root Tests (Dickey-Fuller)**
+
+*   **Purpose:** To test for the presence of a unit root in a time series.
+*   **Dickey-Fuller (DF) Test:**
+    *   Tests if an AR model has an absolute root equal to 1.
+    *   $\(H_0: \theta = 1\)$ (unit root) vs. $\(H_A: \theta < 1\)$ (stationarity)
+    *   Alternative formulation: \(\Delta Y_t = \pi Y_{t-1} + \epsilon_t\) where \(\pi = \theta - 1\)
+    *   \(H_0: \pi = 0\) vs. \(H_A: \pi < 0\)
+*   **Augmented Dickey-Fuller (ADF) Test:**
+    *   Addresses autocorrelated errors by including lagged difference terms
+    *   \(\Delta Y_t = \pi Y_{t-1} + \sum_{i=1}^{p} c_i \Delta Y_{t-i} + \epsilon_t\)
+
+**XIII. Applications in Digital Currencies**
+
+*   **Influential User Identification:** Identify key users in cryptocurrency networks.
+*   **Anomaly Detection:** Identify abnormal user behaviors (e.g., systemic risks, money laundering).
+*   **Network Analysis:** Understand effective connections and dynamic flows in crypto markets.
+*   **Price Prediction:** Predict cryptocurrency movements in real-time.
+*   **Bubble Detection:** Detect and date periods of explosive behavior in financial time series.
+*   **Regional Impact:** Analyze regional effects on Bitcoin transactions.
+
